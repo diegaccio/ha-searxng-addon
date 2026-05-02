@@ -1,8 +1,8 @@
 # SearXNG Home Assistant Add-on
 
-This repository provides a Home Assistant add-on for running SearXNG on Home Assistant OS.
+Run a **free, privacy-friendly search engine** on your Home Assistant OS device.
 
-It is intended for private LAN usage and for integrations such as OpenClaw web search.
+This add-on installs [SearXNG](https://github.com/searxng/searxng), a metasearch engine that respects your privacy and does not track you. It is perfect for integrating **free web search** into your smart home via [OpenClaw](https://github.com/OpenClaw).
 
 ## Add-on included
 
