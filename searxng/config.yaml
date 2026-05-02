@@ -1,0 +1,29 @@
+name: "SearXNG"
+slug: "searxng"
+description: "Private SearXNG metasearch engine for OpenClaw"
+version: "1.0.0"
+url: "https://github.com/diegaccio/ha-searxng-addon"
+startup: services
+boot: auto
+init: false
+
+arch:
+  - amd64
+  - aarch64
+
+ports:
+  8080/tcp: 8888
+
+ports_description:
+  8080/tcp: "SearXNG web interface"
+
+webui: "http://[HOST]:[PORT:8080]"
+
+map:
+  - addon_config:rw
+
+options:
+  secret_key: ""
+
+schema:
+  secret_key: "str?"
