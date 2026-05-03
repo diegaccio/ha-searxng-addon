@@ -15,21 +15,28 @@ if [ -z "${SECRET_KEY}" ]; then
   echo "WARNING: For stable sessions, set secret_key in the add-on configuration."
 fi
 
-cat > "${SETTINGS_FILE}" <<EOF
-use_default_settings: true
+# Use Python to properly merge settings (use_default_settings has bugs with list overrides)
+python3 <<PYEOF
+import yaml
+import os
 
-search:
-  formats:
-    - html
-    - json
+# Load SearXNG default settings
+settings = yaml.safe_load(open('/usr/local/searxng/searx/settings.yml'))
 
-server:
-  bind_address: "0.0.0.0"
-  port: 8080
-  secret_key: "${SECRET_KEY}"
-  limiter: false
-  image_proxy: true
-EOF
+# Override specific settings
+settings['search']['formats'] = ['html', 'json']
+settings['server']['bind_address'] = '0.0.0.0'
+settings['server']['port'] = 8080
+settings['server']['secret_key'] = '${SECRET_KEY}'
+settings['server']['limiter'] = False
+settings['server']['image_proxy'] = True
+
+# Write merged settings
+with open('${SETTINGS_FILE}', 'w') as f:
+    yaml.dump(settings, f, default_flow_style=False, sort_keys=False)
+
+print("INFO: Generated settings.yml with formats:", settings['search']['formats'])
+PYEOF
 
 export SEARXNG_SETTINGS_PATH="${SETTINGS_FILE}"
 
