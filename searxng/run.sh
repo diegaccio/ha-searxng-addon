@@ -10,31 +10,22 @@ if [ -z "${SECRET_KEY}" ]; then
   echo "WARNING: For stable sessions, set secret_key in the add-on configuration."
 fi
 
-# Use Python to properly merge settings and write to the path SearXNG expects
-python3 <<PYEOF
-import yaml
-import os
+# Create settings directory and copy default settings
+mkdir -p /etc/searxng
+cp /usr/local/searxng/searx/settings.yml /etc/searxng/settings.yml
 
-# Ensure /etc/searxng exists (SearXNG's expected settings path)
-os.makedirs('/etc/searxng', exist_ok=True)
+# Add json to formats using sed
+sed -i 's/    - html/    - html\n    - json/' /etc/searxng/settings.yml
 
-# Load SearXNG default settings
-settings = yaml.safe_load(open('/usr/local/searxng/searx/settings.yml'))
+# Update server settings using sed
+sed -i 's/bind_address: "127.0.0.1"/bind_address: "0.0.0.0"/' /etc/searxng/settings.yml
+sed -i 's/port: 8888/port: 8080/' /etc/searxng/settings.yml
+sed -i "s/secret_key: \"ultrasecretkey\"/secret_key: \"${SECRET_KEY}\"/" /etc/searxng/settings.yml
+sed -i 's/limiter: true/limiter: false/' /etc/searxng/settings.yml
+sed -i 's/image_proxy: false/image_proxy: true/' /etc/searxng/settings.yml
 
-# Override specific settings
-settings['search']['formats'] = ['html', 'json']
-settings['server']['bind_address'] = '0.0.0.0'
-settings['server']['port'] = 8080
-settings['server']['secret_key'] = '${SECRET_KEY}'
-settings['server']['limiter'] = False
-settings['server']['image_proxy'] = True
+echo "INFO: Created settings.yml with json format enabled"
+grep -A 3 "formats:" /etc/searxng/settings.yml
 
-# Write merged settings to the path SearXNG actually checks
-with open('/etc/searxng/settings.yml', 'w') as f:
-    yaml.dump(settings, f, default_flow_style=False, sort_keys=False)
-
-print("INFO: Generated /etc/searxng/settings.yml with formats:", settings['search']['formats'])
-PYEOF
-
-echo "INFO: Starting SearXNG..."
+# Now run the base image entrypoint, which will see our file and skip template creation
 exec /usr/local/searxng/dockerfiles/docker-entrypoint.sh

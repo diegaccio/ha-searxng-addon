@@ -8,4 +8,5 @@ LABEL   io.hass.name="SearXNG"   io.hass.description="Private SearXNG metasearch
 COPY run.sh /run.sh
 RUN chmod a+x /run.sh
 
-CMD ["/run.sh"]
+# Override the base image entrypoint so our script runs first
+ENTRYPOINT ["/run.sh"]
