@@ -1,7 +1,7 @@
 name: "SearXNG"
 slug: "searxng"
 description: "Private SearXNG metasearch engine for OpenClaw"
-version: "1.0.3"
+version: "1.0.4"
 url: "https://github.com/diegaccio/ha-searxng-addon"
 startup: services
 boot: auto
