@@ -36,6 +36,14 @@ or:
 http://HOME_ASSISTANT_IP:8888
 ```
 
+### Test JSON output (for OpenClaw)
+
+```bash
+curl "http://homeassistant.local:8888/search?q=test&format=json"
+```
+
+If you see JSON search results, the add-on is ready for OpenClaw.
+
 ## OpenClaw integration
 
 Configure OpenClaw to use SearXNG with:
